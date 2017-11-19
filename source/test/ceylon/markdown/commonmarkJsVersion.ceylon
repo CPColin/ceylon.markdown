@@ -26,5 +26,5 @@ test
 native("js") shared void verifyCommonmarkJsVersion() {
     assertEquals(importedCommonmarkJsVersion, fetchedCommonmarkJsVersion,
         "The imported version of commonmark.js differs from the one used to create the tests.
-         Please run test.ceylon.markdown.fetchspectests::fetchSpecTests()");
+         Please run utility.ceylon.markdown.fetchspectests::run()");
 }
