@@ -25,9 +25,8 @@ shared String headingId(String headingText) {
     }.replace(headingText.lowercased, replacement);
 }
 
-String? headingIdAttribute(RenderOptions options)(Node node)
-        //=> if (options.linkHeadings) then headingId(textContent(node)) else null;
-        => null;
+shared String? headingIdAttribute(RenderOptions options)(Node node)
+        => if (options.linkHeadings) then headingId(textContent(node)) else null;
 
 shared String? languageAttribute(RenderOptions options)(Node node)
         => if (exists language = node.info?.split(' '.equals)?.first, !language.empty)
