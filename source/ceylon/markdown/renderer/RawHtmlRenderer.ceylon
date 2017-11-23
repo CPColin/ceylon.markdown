@@ -143,13 +143,13 @@ shared class RawHtmlRenderer(RenderOptions options = RenderOptions()) {
             newline();
             tag(tagName, sourcePosAttribute(node).chain { "id" -> headingIdAttribute(node) });
             
-            //if (options.linkHeadings) {
-            //    tag("a", { "href" -> "#``headingId(textContent(node))``" });
-            //}
+            if (options.linkHeadings) {
+                tag("a", { "href" -> "#``headingId(textContent(node))``" });
+            }
         } else {
-            //if (options.linkHeadings) {
-            //    tag ("/a");
-            //}
+            if (options.linkHeadings) {
+                tag ("/a");
+            }
             
             tag("/``tagName``");
             newline();
