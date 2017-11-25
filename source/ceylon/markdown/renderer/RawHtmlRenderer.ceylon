@@ -89,13 +89,7 @@ shared class RawHtmlRenderer(RenderOptions options = RenderOptions()) {
     void image(Node node, Boolean entering) {
         if (entering) {
             if (disableTags == 0) {
-                value destination = node.destination else "";
-                
-                if (options.safe && potentiallyUnsafe(destination)) {
-                    literal("<img src=\"\" alt=\"");
-                } else {
-                    literal("<img src=\"``escapeHtml(destination, true)``\" alt=\"");
-                }
+                literal("<img src=\"``escapeHtml(safeDestination(node), true)``\" alt=\"");
             }
             
             disableTags++;
