@@ -31,8 +31,7 @@ import ceylon.html {
 import ceylon.markdown.parser {
     AstNode=Node,
     Document,
-    NodeType,
-    Parser
+    NodeType
 }
 
 shared class CeylonHtmlRenderer(RenderOptions options = RenderOptions()) {
