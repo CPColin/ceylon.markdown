@@ -20,12 +20,12 @@ import ceylon.test {
 test
 parameters (`value testHeadingIdAttributeParameters`)
 shared void testHeadingIdAttribute(Boolean linkHeadings, String heading, String? expected) {
-    value renderOptions = RenderOptions {
+    value options = RenderOptions {
         linkHeadings = linkHeadings;
     };
     value node = Node(NodeType.heading);
     
     node.literal = heading;
     
-    assertEquals(headingIdAttribute(renderOptions)(node), expected);
+    assertEquals(headingIdAttribute(options)(node), expected);
 }
