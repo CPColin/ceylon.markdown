@@ -106,7 +106,7 @@ shared class RawHtmlRenderer(RenderOptions options = RenderOptions()) {
         }
     }
     
-    void emph(Node node, Boolean entering) {
+    void emphasis(Node node, Boolean entering) {
         tag(entering then "em" else "/em");
     }
     
@@ -223,7 +223,7 @@ shared class RawHtmlRenderer(RenderOptions options = RenderOptions()) {
             case (NodeType.code) code
             case (NodeType.codeBlock) codeBlock
             case (NodeType.document) (() {}) // No-op
-            case (NodeType.emphasis) emph
+            case (NodeType.emphasis) emphasis
             case (NodeType.heading) heading
             case (NodeType.htmlBlock) htmlBlock
             case (NodeType.htmlInline) htmlInline
