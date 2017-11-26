@@ -1,69 +1,76 @@
-import ceylon.test {
-    assertEquals
+import ceylon.markdown.parser {
+    Node
 }
 import ceylon.markdown.renderer {
     RawHtmlRenderer,
     RenderOptions
 }
-import ceylon.markdown.parser {
-    Parser
+import ceylon.test {
+    assertEquals,
+    assertTrue
 }
 
 shared class RawHtmlRendererTests() extends RendererTests() {
-    function render(String input, RenderOptions options) {
-        value parser = Parser();
-        value root = parser.parse(input);
+    function renderNode(RenderOptions options, Node node) {
         value renderer = RawHtmlRenderer(options);
         
-        return renderer.render(root);
+        return renderer.render(node);
     }
     
-    shared actual void verifyDefaultLanguageOption(String input, RenderOptions options) {
-        value output = render(input, options);
+    shared actual void verifyLanguageAttribute(RenderOptions options, Node node,
+        String? expectedAttribute) {
+        value expectedCodeTag
+                = if (exists expectedAttribute)
+                then "<code class=\"``expectedAttribute``\">"
+                else "<code>";
+        value output = renderNode(options, node);
         
         assertEquals(output,
-            """<pre><code class="language-test">foo
-               </code></pre>
-               """);
+            "<pre>``expectedCodeTag``foo</code></pre>
+             ");
     }
     
-    shared actual void verifyLinkHeadingsOption(String input, RenderOptions options) {
-        value output = render(input, options);
+    shared actual void verifyLinkHeadingsOption(RenderOptions options, Node node) {
+        value output = renderNode(options, node);
+        value level = node.level else 0;
         
         assertEquals(output,
-            """<h2 id="test_heading"><a href="#test_heading">Test Heading</a></h2>
-               """);
+            "<h``level`` id=\"test_heading\"><a href=\"#test_heading\">Test Heading</a></h``level``>
+             ");
     }
     
-    shared actual void verifySafeOptionLinkDestination(String input, RenderOptions options) {
-        value output = render(input, options);
+    shared actual void verifySafeOptionDestination(RenderOptions options, Node node,
+        Boolean image) {
+        value output = renderNode(options, node);
         
-        assertEquals(output,
-            """<p><a href="">link</a></p>
-               """);
+        if (image) {
+            assertEquals(output,
+                """<img src="" alt="" />""");
+        } else {
+            assertEquals(output,
+                """<a href=""></a>""");
+        }
     }
     
-    shared actual void verifySafeOptionRawHtml(String input, RenderOptions options) {
-        value output = render(input, options);
+    shared actual void verifySafeOptionRawHtml(RenderOptions options, Node node) {
+        value output = renderNode(options, node);
         
         assertEquals(output,
-            """<p>Test <!-- raw HTML omitted -->input<!-- raw HTML omitted --></p>
-               """);
+            "<!-- raw HTML omitted -->");
     }
     
-    shared actual void verifySoftBreakOption(String input, RenderOptions options) {
-        value output = render(input, options);
+    shared actual void verifySoftBreakOption(RenderOptions options, Node node, String softBreak) {
+        value output = renderNode(options, node);
         
-        assertEquals(output,
-            """<p>Line1ZZZLine2</p>
-               """);
+        assertEquals(output, softBreak);
     }
     
-    shared actual void verifySourcePosOption(String input, RenderOptions options) {
-        value output = render(input, options);
+    shared actual void verifySourcePosOption(RenderOptions options, Node node, Integer startLine,
+        Integer startColumn, Integer endLine, Integer endColumn) {
+        value output = renderNode(options, node);
+        value expectedAttribute
+                = "data-sourcepos=\"``startLine``:``startColumn``-``endLine``:``endColumn``\"";
         
-        assertEquals(output,
-            """<p data-sourcepos="1:1-1:12">Test <em>input</em></p>
-               """);
+        assertTrue(output.firstInclusion(expectedAttribute) exists);
     }
 }
