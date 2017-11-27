@@ -76,7 +76,7 @@ shared class CeylonHtmlRenderer(RenderOptions options = RenderOptions()) {
             title = nonemptyTitle(node);
         };
     
-    function emph(AstNode node, {Element*} children)
+    function emphasis(AstNode node, {Element*} children)
         => Em { children = narrow<PhrasingCategory>(children); };
     
     function strong(AstNode node, {Element*} children)
@@ -166,7 +166,7 @@ shared class CeylonHtmlRenderer(RenderOptions options = RenderOptions()) {
             case (NodeType.code) code
             case (NodeType.codeBlock) codeBlock
             case (NodeType.document) ((Anything node, Anything children) => empty) // No-op
-            case (NodeType.emphasis) emph
+            case (NodeType.emphasis) emphasis
             case (NodeType.heading) heading
             case (NodeType.htmlBlock) htmlBlock
             case (NodeType.htmlInline) htmlInline
