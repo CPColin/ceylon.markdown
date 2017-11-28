@@ -38,7 +38,7 @@ void compareAsts(Document ceylonMarkdownDocument, INode commonmarkJsDocument) {
             compare("destination", Node.destination, INode.destination);
             compare("info", Node.info, INode.info);
             compare("level", Node.level, INode.level);
-            compare("listDelimier", Node.listDelimiter, INode.listDelimiter);
+            compare("listDelimiter", Node.listDelimiter, INode.listDelimiter);
             compare("listStart", Node.listStart, INode.listStart);
             compare("listTight", Node.listTight, INode.listTight);
             compare("listType", Node.listType, INode.listType);
