@@ -299,6 +299,22 @@ shared class CeylonHtmlRendererTests() extends RendererTests() {
         verifyAttribute(list, "start", expectedStart);
     }
     
+    
+    test
+    parameters(`value testElideInTightListParameters`)
+    shared void testListTight(Boolean? tight) {
+        value list = createTestList(tight);
+        value output = renderNode(RenderOptions(), list);
+        value ol = verifyElement<Ol>(output.first);
+        value li = verifyElement<Li>(ol.children.first);
+        
+        if (exists tight, tight) {
+            verifyElement<String>(li.children.first);
+        } else {
+            verifyElement<P>(li.children.first);
+        }
+    }
+    
     test
     shared void testParagraph() {
         value node = AstNode(NodeType.paragraph);

@@ -115,9 +115,7 @@ shared class RawHtmlRenderer(RenderOptions options = RenderOptions()) {
     }
     
     void paragraph(Node node, Boolean entering) {
-        if (exists grandparent = node.parent?.parent,
-                grandparent.nodeType == NodeType.list,
-                grandparent.listTight else false) {
+        if (elideInTightList(node)) {
             return;
         }
         
