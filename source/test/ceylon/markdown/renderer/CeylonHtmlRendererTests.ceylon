@@ -88,6 +88,12 @@ import ceylon.language.meta {
     ["ordered", 2, 2, `class Ol`]
 };
 
+{Boolean?*} testListTightParameters = {
+    null,
+    false,
+    true
+};
+
 {String*} testSoftBreakParameters = {
     "",
     "<b>",
@@ -297,6 +303,41 @@ shared class CeylonHtmlRendererTests() extends RendererTests() {
         
         assertTrue(elementType.apply<>().typeOf(list));
         verifyAttribute(list, "start", expectedStart);
+    }
+    
+    
+    test
+    parameters(`value testListTightParameters`)
+    shared void testListTight(Boolean? listTight) {
+        value list = AstNode(NodeType.list);
+        
+        list.listData = ListData {
+            tight = listTight;
+        };
+        
+        value item = AstNode(NodeType.item);
+        
+        list.appendChild(item);
+        
+        value paragraph = AstNode(NodeType.paragraph);
+        
+        item.appendChild(paragraph);
+        
+        value text = AstNode(NodeType.text);
+        
+        text.literal = "text";
+        
+        paragraph.appendChild(text);
+        
+        value output = renderNode(RenderOptions(), list);
+        value ol = verifyElement<Ol>(output.first);
+        value li = verifyElement<Li>(ol.children.first);
+        
+        if (exists listTight, listTight) {
+            verifyElement<String>(li.children.first);
+        } else {
+            verifyElement<P>(li.children.first);
+        }
     }
     
     test
