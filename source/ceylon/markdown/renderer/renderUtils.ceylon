@@ -1,9 +1,17 @@
 import ceylon.markdown.parser {
-    Node
+    Node,
+    NodeType
 }
 import ceylon.regex {
     regex
 }
+
+"Returns `true` if the grandparent of the given node, which is probably a Paragraph, is a \"tight\"
+ list."
+shared Boolean elideInTightList(Node node)
+        => if (exists grandparent = node.parent?.parent,
+            grandparent.nodeType == NodeType.list,
+            grandparent.listTight else false) then true else false;
 
 shared String headingId(String headingText) {
     function replacement(String match) {

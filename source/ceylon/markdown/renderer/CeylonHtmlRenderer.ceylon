@@ -83,9 +83,7 @@ shared class CeylonHtmlRenderer(RenderOptions options = RenderOptions()) {
         => Strong { children = narrow<PhrasingCategory>(children); };
     
     function paragraph(AstNode node, {Element*} children)
-        => if (exists grandparent = node.parent?.parent,
-            grandparent.nodeType == NodeType.list,
-            grandparent.listTight else false)
+        => elideInTightList(node)
         then children // Elide Paragraph nodes in tight lists.
         else P {
             attributes = sourcePosAttribute(node);
