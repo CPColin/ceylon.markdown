@@ -140,10 +140,12 @@ shared class CeylonHtmlRendererTests() extends RendererTests() {
         }
     }
     
-    // TODO: This should be Anything|{Element*}, but JS tests were failing. Needs investigation.
-    function verifyElement<Type>(Anything|String|{Anything*} elements) {
+    function verifyElement<Type>(Anything|{Element*} elements) {
         Anything element;
         
+        // JS tests were breaking with "is {Element*}", so we had to switch to "is {Anything*}".
+        // This of course meant that Strings would match, so those get their own check.
+        // Will attempt to boil this down to a test case and file it.
         if (is String elements) {
             element = elements;
         } else if (is {Anything*} elements) {
