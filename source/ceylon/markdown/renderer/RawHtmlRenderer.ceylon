@@ -215,6 +215,10 @@ shared class RawHtmlRenderer(RenderOptions options = RenderOptions()) {
         newline();
     }
     
+    void specialLink(Node node) {
+        literal(package.specialLink(node));
+    }
+    
     function renderFunction(Node node)
         => switch (node.nodeType)
             case (NodeType.blockQuote) blockQuote
@@ -232,6 +236,7 @@ shared class RawHtmlRenderer(RenderOptions options = RenderOptions()) {
             case (NodeType.list) list
             case (NodeType.paragraph) paragraph
             case (NodeType.softBreak) softBreak
+            case (NodeType.specialLink) specialLink
             case (NodeType.strong) strong
             case (NodeType.text) text
             case (NodeType.thematicBreak) thematicBreak;

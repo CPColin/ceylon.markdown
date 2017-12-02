@@ -413,8 +413,9 @@ shared class Parser {
                 }
             }
             case (NodeType.code | NodeType.emphasis | NodeType.htmlInline | NodeType.image
-                    | NodeType.lineBreak | NodeType.link | NodeType.softBreak | NodeType.strong
-                    | NodeType.text | NodeType.thematicBreak) object satisfies Block {
+                    | NodeType.lineBreak | NodeType.link | NodeType.softBreak | NodeType.specialLink
+                    | NodeType.strong | NodeType.text | NodeType.thematicBreak)
+                    object satisfies Block {
                 shared actual Boolean acceptsLines => false;
                 
                 shared actual Boolean canContain(NodeType type) => false;

@@ -75,6 +75,8 @@ String safeDestination(RenderOptions options)(Node node)
         => if (exists sourcePos = node.sourcePos, options.sourcePos)
         then ["data-sourcepos"->sourcePos.string] else empty;
 
+String specialLink(Node node) => "[[``node.literal else ""``]]";
+
 "Collects and returns all text content contained in the given [[root]] and its children."
 shared String textContent(Node root) {
     value stringBuilder = StringBuilder();

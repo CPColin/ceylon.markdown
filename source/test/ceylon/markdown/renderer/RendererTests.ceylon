@@ -140,6 +140,16 @@ shared abstract class RendererTests() {
         verifySourcePosOption(options, node, startLine, startColumn, endLine, endColumn);
     }
     
+    test
+    shared void testSpecialLink() {
+        value text = "text";
+        value node = Node(NodeType.specialLink);
+        
+        node.literal = text;
+        
+        verifySpecialLink(node);
+    }
+    
     shared formal void verifyLanguageAttribute(RenderOptions options, Node node,
         String? expectedAttribute);
     
@@ -153,4 +163,6 @@ shared abstract class RendererTests() {
     
     shared formal void verifySourcePosOption(RenderOptions options, Node node, Integer startLine,
         Integer startColumn, Integer endLine, Integer endColumn);
+    
+    shared formal void verifySpecialLink(Node node);
 }

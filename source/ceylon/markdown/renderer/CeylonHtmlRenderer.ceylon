@@ -158,6 +158,8 @@ shared class CeylonHtmlRenderer(RenderOptions options = RenderOptions()) {
         "\n"
     };
     
+    function specialLink(AstNode node, Anything _ = null) => package.specialLink(node);
+    
     function renderFunction(AstNode node)
         => switch (node.nodeType)
             case (NodeType.blockQuote) blockQuote
@@ -175,6 +177,7 @@ shared class CeylonHtmlRenderer(RenderOptions options = RenderOptions()) {
             case (NodeType.list) list
             case (NodeType.paragraph) paragraph
             case (NodeType.softBreak) softBreak
+            case (NodeType.specialLink) specialLink
             case (NodeType.strong) strong
             case (NodeType.text) text
             case (NodeType.thematicBreak) thematicBreak;
