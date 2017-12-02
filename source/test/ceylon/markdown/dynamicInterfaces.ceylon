@@ -7,7 +7,7 @@ import commonmark {
     Parser
 }
 
-dynamic INode satisfies WalkableNode<INode> {
+shared dynamic INode satisfies WalkableNode<INode> {
     shared formal String onEnter;
     
     shared formal String onExit;
