@@ -102,6 +102,8 @@ import ceylon.language.meta {
 };
 
 shared class CeylonHtmlRendererTests() extends RendererTests() {
+    alias Element => CeylonHtmlRenderer.Element;
+    
     function renderNode(RenderOptions options, AstNode node) {
         value document = Document();
         
@@ -112,7 +114,7 @@ shared class CeylonHtmlRendererTests() extends RendererTests() {
         return renderer.render(document);
     }
     
-    function renderText(CeylonHtmlRenderer.Element[] elements) {
+    function renderText(Element[] elements) {
         value stringBuilder = StringBuilder();
         
         elements.coalesced.each((element) => stringBuilder.append(element.string));
@@ -138,7 +140,20 @@ shared class CeylonHtmlRendererTests() extends RendererTests() {
         }
     }
     
-    function verifyElement<Type>(Anything element) {
+    // TODO: This should be Anything|{Element*}, but JS tests were failing. Needs investigation.
+    function verifyElement<Type>(Anything|String|{Anything*} elements) {
+        Anything element;
+        
+        if (is String elements) {
+            element = elements;
+        } else if (is {Anything*} elements) {
+            assertEquals(elements.size, 1);
+            
+            element = elements.first;
+        } else {
+            element = elements;
+        }
+        
         assertTrue(element is Type, "Expected ``typeLiteral<Type>()`` but was ``type(element)``");
         
         assert (is Type element);
@@ -151,7 +166,7 @@ shared class CeylonHtmlRendererTests() extends RendererTests() {
         value node = AstNode(NodeType.blockQuote);
         value output = renderNode(RenderOptions(), node);
         
-        verifyElement<Blockquote>(output.first);
+        verifyElement<Blockquote>(output);
     }
     
     test
@@ -159,16 +174,16 @@ shared class CeylonHtmlRendererTests() extends RendererTests() {
         value node = AstNode(NodeType.code);
         value output = renderNode(RenderOptions(), node);
         
-        verifyElement<Code>(output.first);
+        verifyElement<Code>(output);
     }
     
     test
     shared void testCodeBlock() {
         value node = AstNode(NodeType.codeBlock);
         value output = renderNode(RenderOptions(), node);
-        value pre = verifyElement<Pre>(output.first);
+        value pre = verifyElement<Pre>(output);
         
-        verifyElement<Code>(pre.children.first);
+        verifyElement<Code>(pre.children);
     }
     
     test
@@ -176,7 +191,7 @@ shared class CeylonHtmlRendererTests() extends RendererTests() {
         value node = AstNode(NodeType.emphasis);
         value output = renderNode(RenderOptions(), node);
         
-        verifyElement<Em>(output.first);
+        verifyElement<Em>(output);
     }
     
     test
@@ -187,8 +202,9 @@ shared class CeylonHtmlRendererTests() extends RendererTests() {
         node.level = level;
         
         value output = renderNode(RenderOptions(), node);
+        value heading = verifyElement<H1|H2|H3|H4|H5|H6>(output);
         
-        assertTrue(type.apply<>().typeOf(output.first));
+        assertTrue(type.apply<>().typeOf(heading));
     }
     
     test
@@ -199,6 +215,9 @@ shared class CeylonHtmlRendererTests() extends RendererTests() {
         node.literal = html;
         
         value output = renderNode(RenderOptions(), node);
+        
+        assertEquals(output.size, 3);
+        
         value start = verifyElement<String>(output[0]);
         value raw = verifyElement<Raw>(output[1]);
         value end = verifyElement<String>(output[2]);
@@ -216,7 +235,7 @@ shared class CeylonHtmlRendererTests() extends RendererTests() {
         node.literal = html;
         
         value output = renderNode(RenderOptions(), node);
-        value raw = verifyElement<Raw>(output.first);
+        value raw = verifyElement<Raw>(output);
         
         assertEquals(raw.data, html);
     }
@@ -235,7 +254,7 @@ shared class CeylonHtmlRendererTests() extends RendererTests() {
         node.title = title;
         
         value output = renderNode(RenderOptions(), node);
-        value image = verifyElement<Img>(output.first);
+        value image = verifyElement<Img>(output);
         
         verifyAttribute(image, "src", destination);
         verifyAttribute(image, "alt", expectedAlt);
@@ -247,7 +266,7 @@ shared class CeylonHtmlRendererTests() extends RendererTests() {
         value node = AstNode(NodeType.item);
         value output = renderNode(RenderOptions(), node);
         
-        verifyElement<Li>(output.first);
+        verifyElement<Li>(output);
     }
     
     test
@@ -255,7 +274,7 @@ shared class CeylonHtmlRendererTests() extends RendererTests() {
         value node = AstNode(NodeType.lineBreak);
         value output = renderNode(RenderOptions(), node);
         
-        verifyElement<Br>(output.first);
+        verifyElement<Br>(output);
     }
     
     test
@@ -272,8 +291,8 @@ shared class CeylonHtmlRendererTests() extends RendererTests() {
         node.title = title;
         
         value output = renderNode(RenderOptions(), node);
-        value anchor = verifyElement<A>(output.first);
-        value anchorText = verifyElement<String>(anchor.children.first);
+        value anchor = verifyElement<A>(output);
+        value anchorText = verifyElement<String>(anchor.children);
         
         verifyAttribute(anchor, "href", destination);
         verifyAttribute(anchor, "title", expectedTitle);
@@ -293,7 +312,7 @@ shared class CeylonHtmlRendererTests() extends RendererTests() {
         node.listData = listData;
         
         value output = renderNode(RenderOptions(), node);
-        value list = verifyElement<Ol|Ul>(output.first);
+        value list = verifyElement<Ol|Ul>(output);
         
         assertTrue(elementType.apply<>().typeOf(list));
         verifyAttribute(list, "start", expectedStart);
@@ -305,13 +324,13 @@ shared class CeylonHtmlRendererTests() extends RendererTests() {
     shared void testListTight(Boolean? tight) {
         value list = createTestList(tight);
         value output = renderNode(RenderOptions(), list);
-        value ol = verifyElement<Ol>(output.first);
-        value li = verifyElement<Li>(ol.children.first);
+        value ol = verifyElement<Ol>(output);
+        value li = verifyElement<Li>(ol.children);
         
         if (exists tight, tight) {
-            verifyElement<String>(li.children.first);
+            verifyElement<String>(li.children);
         } else {
-            verifyElement<P>(li.children.first);
+            verifyElement<P>(li.children);
         }
     }
     
@@ -320,7 +339,7 @@ shared class CeylonHtmlRendererTests() extends RendererTests() {
         value node = AstNode(NodeType.paragraph);
         value output = renderNode(RenderOptions(), node);
         
-        verifyElement<P>(output.first);
+        verifyElement<P>(output);
     }
     
     test
@@ -331,7 +350,7 @@ shared class CeylonHtmlRendererTests() extends RendererTests() {
         };
         value node = AstNode(NodeType.softBreak);
         value output = renderNode(options, node);
-        value raw = verifyElement<Raw>(output.first);
+        value raw = verifyElement<Raw>(output);
         
         assertEquals(raw.data, softBreak);
     }
@@ -341,7 +360,7 @@ shared class CeylonHtmlRendererTests() extends RendererTests() {
         value node = AstNode(NodeType.strong);
         value output = renderNode(RenderOptions(), node);
         
-        verifyElement<Strong>(output.first);
+        verifyElement<Strong>(output);
     }
     
     test
@@ -352,7 +371,7 @@ shared class CeylonHtmlRendererTests() extends RendererTests() {
         node.literal = literal;
         
         value output = renderNode(RenderOptions(), node);
-        value actual = verifyElement<String>(output.first);
+        value actual = verifyElement<String>(output);
         
         assertEquals(actual, expected);
     }
@@ -362,14 +381,14 @@ shared class CeylonHtmlRendererTests() extends RendererTests() {
         value node = AstNode(NodeType.thematicBreak);
         value output = renderNode(RenderOptions(), node);
         
-        verifyElement<Hr>(output.first);
+        verifyElement<Hr>(output);
     }
     
     shared actual void verifyLanguageAttribute(RenderOptions options, AstNode node,
         String? expectedAttribute) {
         value output = renderNode(options, node);
-        value pre = verifyElement<Pre>(output.first);
-        value code = verifyElement<Code>(pre.children.first);
+        value pre = verifyElement<Pre>(output);
+        value code = verifyElement<Code>(pre.children);
         
         verifyAttribute(code, "class", expectedAttribute);
     }
@@ -377,11 +396,11 @@ shared class CeylonHtmlRendererTests() extends RendererTests() {
     shared actual void verifyLinkHeadingsOption(RenderOptions options, AstNode node) {
         value output = renderNode(options, node);
         // We don't care which heading level we have here; that'll be verified elsewhere.
-        value heading = verifyElement<H1|H2|H3|H4|H5|H6>(output.first);
+        value heading = verifyElement<H1|H2|H3|H4|H5|H6>(output);
         
         verifyAttribute(heading, "id", "test_heading");
         
-        value anchor = verifyElement<A>(heading.children.first);
+        value anchor = verifyElement<A>(heading.children);
         
         verifyAttribute(anchor, "href", "#test_heading");
     }
@@ -391,11 +410,11 @@ shared class CeylonHtmlRendererTests() extends RendererTests() {
         value output = renderNode(options, node);
         
         if (image) {
-            value img = verifyElement<Img>(output.first);
+            value img = verifyElement<Img>(output);
             
             verifyAttribute(img, "src", "");
         } else {
-            value anchor = verifyElement<A>(output.first);
+            value anchor = verifyElement<A>(output);
             
             verifyAttribute(anchor, "href", "");
         }
@@ -420,7 +439,7 @@ shared class CeylonHtmlRendererTests() extends RendererTests() {
     shared actual void verifySourcePosOption(RenderOptions options, AstNode node, Integer startLine,
         Integer startColumn, Integer endLine, Integer endColumn) {
         value output = renderNode(options, node);
-        value element = verifyElement<Node>(output.first);
+        value element = verifyElement<Node>(output);
         value child = element.children.first;
         Node target;
         
@@ -437,7 +456,7 @@ shared class CeylonHtmlRendererTests() extends RendererTests() {
     
     shared actual void verifySpecialLink(AstNode node) {
         value output = renderNode(RenderOptions(), node);
-        value element = verifyElement<String>(output.first);
+        value element = verifyElement<String>(output);
         
         assertEquals(element, "[[``node.literal else ""``]]");
     }
