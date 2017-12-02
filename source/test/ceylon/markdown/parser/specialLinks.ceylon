@@ -95,3 +95,23 @@ shared void testTransformSpecialLinks() {
     
     assertFalse(child.next exists);
 }
+
+test
+shared void testTransformSpecialLinksFailure() {
+    function transform(String _) => null;
+    value paragraph = createSpecialLinkNode(true);
+    
+    transformSpecialLinks(paragraph, transform);
+    
+    value child = paragraph.firstChild;
+    
+    assertTrue(child exists);
+    
+    assert (exists child);
+    
+    assertEquals(child.nodeType, NodeType.specialLink);
+    
+    assertEquals(child.literal, specialLinkNodeText);
+    
+    assertFalse(child.next exists);
+}
