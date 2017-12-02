@@ -2,10 +2,12 @@ import ceylon.markdown.parser {
     Node,
     NodeType,
     ParseOptions,
-    Parser
+    Parser,
+    transformSpecialLinks
 }
 import ceylon.test {
     assertEquals,
+    assertFalse,
     assertTrue,
     test
 }
@@ -73,4 +75,23 @@ shared void testSpecialLinksOptionEnabled() {
     assertEquals(specialLink.nodeType, NodeType.specialLink);
     
     assertEquals(specialLink.literal, specialLinkNodeText);
+}
+
+test
+shared void testTransformSpecialLinks() {
+    value nodeType = NodeType.thematicBreak;
+    function transform(String _) => Node(nodeType);
+    value paragraph = createSpecialLinkNode(true);
+    
+    transformSpecialLinks(paragraph, transform);
+    
+    value child = paragraph.firstChild;
+    
+    assertTrue(child exists);
+    
+    assert (exists child);
+    
+    assertEquals(child.nodeType, nodeType);
+    
+    assertFalse(child.next exists);
 }

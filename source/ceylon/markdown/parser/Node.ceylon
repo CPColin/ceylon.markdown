@@ -93,6 +93,7 @@ shared class Node(shared NodeType nodeType, shared SourcePos? sourcePos = null)
         }
     }
     
+    "Inserts the given [[sibling]] node after this node."
     shared void insertAfter(Node sibling) {
         sibling.unlink();
         sibling.next = this.next;

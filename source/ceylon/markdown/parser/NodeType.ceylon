@@ -82,7 +82,7 @@ shared class NodeType
     }
     
     shared new specialLink {
-        commonmarkJsType = "specialLink";
+        commonmarkJsType = "special_link";
         container = false;
     }
     
@@ -100,4 +100,6 @@ shared class NodeType
         commonmarkJsType = "thematic_break";
         container = false;
     }
+    
+    string = commonmarkJsType;
 }
