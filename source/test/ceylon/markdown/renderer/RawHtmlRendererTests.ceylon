@@ -73,4 +73,10 @@ shared class RawHtmlRendererTests() extends RendererTests() {
         
         assertTrue(output.firstInclusion(expectedAttribute) exists);
     }
+    
+    shared actual void verifySpecialLink(Node node) {
+        value output = renderNode(RenderOptions(), node);
+        
+        assertEquals(output, "[[``node.literal else ""``]]");
+    }
 }

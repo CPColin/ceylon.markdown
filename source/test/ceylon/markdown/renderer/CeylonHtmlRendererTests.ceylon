@@ -434,4 +434,11 @@ shared class CeylonHtmlRendererTests() extends RendererTests() {
         verifyAttribute(target, "data-sourcepos",
             "``startLine``:``startColumn``-``endLine``:``endColumn``");
     }
+    
+    shared actual void verifySpecialLink(AstNode node) {
+        value output = renderNode(RenderOptions(), node);
+        value element = verifyElement<String>(output.first);
+        
+        assertEquals(element, "[[``node.literal else ""``]]");
+    }
 }

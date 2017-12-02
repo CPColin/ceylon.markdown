@@ -64,6 +64,8 @@ class InlineParser() {
     
     value regexSpaceNewline = """^ *(?:\n *)?""";
     
+    value regexSpecialLink = """\[\[(.*?)\]\]""";
+    
     value regexTicks = """`+""";
     
     value regexTicksHere = """^`+""";
@@ -244,14 +246,20 @@ class InlineParser() {
         }
     }
     
-    String? match(Regex|String expression) {
+    "Attempts to match the given [[expression]] and, on success, advances the current [[position]]
+     past its end."
+    String? match(Regex|String expression, Integer? group = null) {
         value match = (if (is String expression) then regex(expression) else expression)
                 .find(subject.substring(position));
         
         if (exists match) {
             position += match.end;
             
-            return match.matched;
+            if (exists group) {
+                return match.groups[group];
+            } else {
+                return match.matched;
+            }
         } else {
             return null;
         }
@@ -289,7 +297,8 @@ class InlineParser() {
             result = options.smart && handleDelim(character, block);
         }
         case ('[') {
-            result = parseOpenBracket(block);
+            result = (options.specialLinks && parseSpecialLink(block))
+                || parseOpenBracket(block);
         }
         case ('!') {
             result = parseBang(block);
@@ -779,6 +788,20 @@ class InlineParser() {
         addBracket(node, startPosition, false);
         
         return true;
+    }
+    
+    Boolean parseSpecialLink(Node block) {
+        if (exists match = match(regexSpecialLink, 0)) {
+            value node = Node(NodeType.specialLink);
+            
+            node.literal = match;
+            
+            block.appendChild(node);
+            
+            return true;
+        } else {
+            return false;
+        }
     }
     
     Boolean parseString(Node block) {

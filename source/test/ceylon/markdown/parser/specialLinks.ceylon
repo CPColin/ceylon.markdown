@@ -72,5 +72,5 @@ shared void testSpecialLinksOptionEnabled() {
     
     assertEquals(specialLink.nodeType, NodeType.specialLink);
     
-    assertEquals(collectNodeText(specialLink), specialLinkNodeText);
+    assertEquals(specialLink.literal, specialLinkNodeText);
 }

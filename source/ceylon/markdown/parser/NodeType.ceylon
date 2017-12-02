@@ -1,7 +1,7 @@
 shared class NodeType
         of blockQuote | code | codeBlock | document | emphasis | heading | htmlBlock | htmlInline
-        | image | item | lineBreak | link | list | paragraph | softBreak | strong | text
-        | thematicBreak {
+        | image | item | lineBreak | link | list | paragraph | softBreak | specialLink | strong
+        | text | thematicBreak {
     shared String commonmarkJsType;
     
     shared Boolean container;
@@ -78,6 +78,11 @@ shared class NodeType
     
     shared new softBreak {
         commonmarkJsType = "softbreak";
+        container = false;
+    }
+    
+    shared new specialLink {
+        commonmarkJsType = "specialLink";
         container = false;
     }
     
