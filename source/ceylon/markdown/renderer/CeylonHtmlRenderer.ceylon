@@ -136,6 +136,7 @@ shared class CeylonHtmlRenderer(RenderOptions options = RenderOptions()) {
     function list(AstNode node, {Element*} children)
         => if (exists listType = node.listType, listType == "bullet")
         then Ul {
+            attributes = sourcePosAttribute(node);
             children = children.narrow<Li>();
         }
         else Ol {

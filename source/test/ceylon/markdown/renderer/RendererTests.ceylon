@@ -1,4 +1,5 @@
 import ceylon.markdown.parser {
+    ListData,
     Node,
     NodeType,
     SourceLoc,
@@ -30,27 +31,33 @@ import ceylon.test {
     "ZZZ"
 };
 
-{[NodeType, Integer, Integer, Integer, Integer]*} testSourcePosOptionParameters = {
+{[NodeType, Integer, Integer, Integer, Integer, Anything(Node)?]*} testSourcePosOptionParameters = {
     // The commented-out values were not implemented in commonmark.js, so they weren't implemented
     // here, either. If this changes in the future, we can uncomment those values.
-    [NodeType.blockQuote, 1, 2, 3, 4],
-    //[NodeType.code, 2, 3, 4, 5],
-    [NodeType.codeBlock, 3, 4, 5, 6],
-    //[NodeType.document, 4, 5, 6, 7],
-    //[NodeType.emphasis, 5, 6, 7, 8],
-    [NodeType.heading, 6, 7, 8, 9],
-    //[NodeType.htmlBlock, 7, 8, 9, 10],
-    //[NodeType.htmlInline, 8, 9, 10, 11],
-    //[NodeType.image, 9, 10, 11, 12],
-    [NodeType.item, 10, 11, 12, 13],
-    //[NodeType.lineBreak, 11, 12, 13, 14],
-    [NodeType.link, 12, 13, 14, 15],
-    [NodeType.list, 13, 14, 15, 16],
-    [NodeType.paragraph, 14, 15, 16, 17],
-    //[NodeType.softBreak, 15, 16, 17, 18],
-    //[NodeType.strong, 16, 17, 18, 19],
-    //[NodeType.text, 20, 21, 22, 23],
-    [NodeType.thematicBreak, 21, 22, 23, 24]
+    [NodeType.blockQuote, 1, 2, 3, 4, null],
+    //[NodeType.code, 2, 3, 4, 5, null],
+    [NodeType.codeBlock, 3, 4, 5, 6, null],
+    //[NodeType.document, 4, 5, 6, 7, null],
+    //[NodeType.emphasis, 5, 6, 7, 8, null],
+    [NodeType.heading, 1, 7, 8, 9, (Node node) => node.level = 1],
+    [NodeType.heading, 2, 7, 8, 9, (Node node) => node.level = 2],
+    [NodeType.heading, 3, 7, 8, 9, (Node node) => node.level = 3],
+    [NodeType.heading, 4, 7, 8, 9, (Node node) => node.level = 4],
+    [NodeType.heading, 5, 7, 8, 9, (Node node) => node.level = 5],
+    [NodeType.heading, 6, 7, 8, 9, (Node node) => node.level = 6],
+    //[NodeType.htmlBlock, 7, 8, 9, 10, null],
+    //[NodeType.htmlInline, 8, 9, 10, 11, null],
+    //[NodeType.image, 9, 10, 11, 12, null],
+    [NodeType.item, 10, 11, 12, 13, null],
+    //[NodeType.lineBreak, 11, 12, 13, 14, null],
+    [NodeType.link, 12, 13, 14, 15, null],
+    [NodeType.list, 1, 14, 15, 16, (Node node) => node.listData = ListData { type = "bullet"; }],
+    [NodeType.list, 2, 14, 15, 16, (Node node) => node.listData = ListData { type = "ordered"; }],
+    [NodeType.paragraph, 14, 15, 16, 17, null],
+    //[NodeType.softBreak, 15, 16, 17, 18, null],
+    //[NodeType.strong, 16, 17, 18, 19, null],
+    //[NodeType.text, 20, 21, 22, 23, null],
+    [NodeType.thematicBreak, 21, 22, 23, 24, null]
 };
 
 shared abstract class RendererTests() {
@@ -128,14 +135,16 @@ shared abstract class RendererTests() {
     test
     parameters (`value testSourcePosOptionParameters`)
     shared void testSourcePosOption(NodeType nodeType, Integer startLine, Integer startColumn,
-        Integer endLine, Integer endColumn) {
+        Integer endLine, Integer endColumn, Anything(Node)? decorator) {
         value options = RenderOptions {
             sourcePos = true;
         };
         value node = Node(nodeType,
             SourcePos(SourceLoc(startLine, startColumn), SourceLoc(endLine, endColumn)));
         
-        node.level = 1;
+        if (exists decorator) {
+            decorator(node);
+        }
         
         verifySourcePosOption(options, node, startLine, startColumn, endLine, endColumn);
     }
