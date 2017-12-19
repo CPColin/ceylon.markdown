@@ -20,13 +20,7 @@ import test.ceylon.markdown {
  Ceylon classes. Note that the CommonMark spec publishes a `spec.json` file that could be easier to
  deal with, but we target the `commonmark.js` tests because this implementation was based off of
  that code."
-shared native void run();
-
-native ("js") shared void run() {
-    throw Exception("This function must be run on the JVM backend.");
-}
-
-native ("jvm") shared void run() {
+shared void run() {
     variable value count = 0;
     
     class Parser(Writer writer, Iterator<String> iterator, String baseClass,
