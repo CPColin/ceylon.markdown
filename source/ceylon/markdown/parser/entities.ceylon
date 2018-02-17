@@ -19,7 +19,7 @@ import ceylon.regex {
     regex
 }
 
-shared object entities {
+object entities {
     value regexDecimalEntity => regex {
         expression = "&#([0-9]{1,8});";
     };

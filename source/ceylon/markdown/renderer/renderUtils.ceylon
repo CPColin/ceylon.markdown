@@ -94,7 +94,7 @@ String safeDestination(RenderOptions options)(Node node)
 String specialLink(Node node) => "[[``node.literal else ""``]]";
 
 "Collects and returns all text content contained in the given [[root]] and its children."
-shared String textContent(Node root) {
+String textContent(Node root) {
     value stringBuilder = StringBuilder();
     
     for ([entering, node] in root) {

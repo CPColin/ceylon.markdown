@@ -17,7 +17,7 @@
 "Maps HTML entites to the character(s) they represent.
  This file was created by `util.ceylon.markdown.fetchentitymap::run`
  and was parsed from [the HTML spec](https://html.spec.whatwg.org/entities.json)."
-shared Map<String, String> entityMap = map({
+Map<String, String> entityMap = map({
     "&AElig;" -> "\{#c6}",
     "&AMP;" -> "\{#26}",
     "&Aacute;" -> "\{#c1}",
