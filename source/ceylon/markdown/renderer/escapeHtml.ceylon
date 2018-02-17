@@ -26,7 +26,7 @@ import ceylon.regex {
 "Escapes dangerous characters in the given [[string]] by substituting in their equivalent HTML
  entities. If [[preserveEntities]] is `true`, this function will avoid double-escaping HTML entities
  that it finds."
-shared String escapeHtml(String string, Boolean preserveEntities = false) {
+String escapeHtml(String string, Boolean preserveEntities = false) {
     value xmlSpecial = """[&<>"]""";
     
     value regexXmlSpecial => regex {
