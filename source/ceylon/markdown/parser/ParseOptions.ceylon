@@ -14,9 +14,13 @@
  * under the License.
  *****************************************************************************/
 
+"Options that can be passed to the [Parser] constructor, to control some of the parsing behavior."
 shared class ParseOptions(
+    """When enabled, turns quotation marks into "smart" or "curly" quotes, turns runs of hyphens
+       into en- and em-dashes, and turns runs of periods into ellipses."""
     shared Boolean smart = false,
-    "When enabled, parses \"special\" links, delimited by double square brackets."
+    """When enabled, parses "special" links, which are delimited by double square brackets."""
     shared Boolean specialLinks = false,
+    "When enabled, logs timing statistics during parsing, for debugging."
     shared Boolean time = false
 ) {}
