@@ -24,6 +24,7 @@ import ceylon.test {
     fail
 }
 
+"Asserts the equality of all the nodes in the given AST's."
 void compareAsts(Document ceylonMarkdownDocument, INode commonmarkJsDocument) {
     debugTree(ceylonMarkdownDocument);
     debugTree(commonmarkJsDocument);
@@ -47,7 +48,7 @@ void compareAsts(Document ceylonMarkdownDocument, INode commonmarkJsDocument) {
                   ``debugNode(ceylonMarkdownEvent[1])``");
         } else {
             value compare
-                = compareDirectPortAttributes(ceylonMarkdownEvent[1], commonmarkJsEvent[1]);
+                = compareAttributes(ceylonMarkdownEvent[1], commonmarkJsEvent[1]);
             
             compare("type", Node.type, INode.type);
             
@@ -64,7 +65,8 @@ void compareAsts(Document ceylonMarkdownDocument, INode commonmarkJsDocument) {
     }
 }
 
-void compareDirectPortAttributes<Type>(Node ceylonMarkdownNode, INode commonmarkJsNode)
+"Asserts the equality of the given attributes of the given nodes."
+void compareAttributes<Type>(Node ceylonMarkdownNode, INode commonmarkJsNode)
         (String attributeName, Type(Node) ceylonMarkdownAttribute,
         Type(INode) commonmarkJsAttribute) {
     try {
