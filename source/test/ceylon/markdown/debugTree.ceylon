@@ -19,7 +19,8 @@ import ceylon.markdown.parser {
     NodeWalker
 }
 
-shared void debugTree(Node|INode root) {
+"Prints out the tree starting at the given [root], for debugging purposes."
+void debugTree(Node|INode root) {
     function parentCount(Node|INode node) {
         variable Integer count = 0;
         variable Node|INode current = node;
