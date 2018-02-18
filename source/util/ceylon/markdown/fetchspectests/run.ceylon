@@ -33,14 +33,14 @@ import test.ceylon.markdown {
 }
 
 "Fetches the CommonMark spec from the `commonmark.js` repository and converts its examples into
- Ceylon classes. Note that the CommonMark spec publishes a `spec.json` file that could be easier to
+ test cases. Note that the CommonMark spec publishes a `spec.json` file that could be easier to
  deal with, but we target the `commonmark.js` tests because this implementation was based off of
  that code."
 shared void run() {
     variable value count = 0;
     
-    class Parser(Writer writer, Iterator<String> iterator, String baseClass,
-        String? otherFile, Boolean smartPunctuation) {
+    class Parser(Writer writer, Iterator<String> iterator, String? otherFile,
+        Boolean smartPunctuation) {
         late variable String section;
         
         late variable String version;
@@ -130,15 +130,13 @@ shared void run() {
     assert (is File|Nil file);
     
     try (writer = createFileIfNil(file).Overwriter("UTF-8")) {
-        void parseTests(String baseClass = "SpecTest", String? otherFile = null,
-            Boolean smartPunctuation = false) {
+        void parseTests(String? otherFile = null, Boolean smartPunctuation = false) {
             value fileName = otherFile else "spec.txt";
             value specUri = parse("https://raw.githubusercontent.com/jgm/commonmark.js/\
                                    ``fetchedCommonmarkJsVersion``/test/``fileName``");
             value response = get(specUri).execute();
             
-            Parser(writer, response.contents.lines.iterator(), baseClass, otherFile,
-                smartPunctuation);
+            Parser(writer, response.contents.lines.iterator(), otherFile, smartPunctuation);
         }
         
         writer.writeLine("/*****************************************************************************
@@ -163,8 +161,8 @@ shared void run() {
         writer.write("{[ String, String, String ]|[ String, String, String, Boolean ]*} specTests = {");
         
         parseTests();
-        parseTests("SmartPunctuationTest", "smart_punct.txt", true);
-        parseTests("SpecTest", "regression.txt");
+        parseTests("smart_punct.txt", true);
+        parseTests("regression.txt");
         
         writer.writeLine();
         writer.writeLine("};");
