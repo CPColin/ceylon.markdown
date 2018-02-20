@@ -21,6 +21,7 @@ import ceylon.markdown.parser {
     NodeType
 }
 
+"A renderer that produces a [[String]] of raw HTML."
 shared class RawHtmlRenderer(RenderOptions options = RenderOptions()) {
     value buffer = StringBuilder();
     
@@ -257,6 +258,7 @@ shared class RawHtmlRenderer(RenderOptions options = RenderOptions()) {
             case (NodeType.text) text
             case (NodeType.thematicBreak) thematicBreak;
     
+    "Renders the given tree, starting at its [[root]]."
     shared String render(Node root) {
         buffer.clear();
         
