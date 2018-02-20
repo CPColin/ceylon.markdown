@@ -14,5 +14,7 @@
  * under the License.
  *****************************************************************************/
 
+"Contains code for parsing Markdown input into nodes that will be rendered by
+ [[package ceylon.markdown.renderer]]."
 suppressWarnings("ceylonNamespace")
 shared package ceylon.markdown.parser;

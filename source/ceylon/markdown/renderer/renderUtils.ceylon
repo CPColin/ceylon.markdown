@@ -29,6 +29,7 @@ shared Boolean elideInTightList(Node node)
             grandparent.nodeType == NodeType.list,
             grandparent.listTight else false) then true else false;
 
+"Returns the given [[headingText]], converted into a form suitable for use in HTML ID attributes."
 shared String headingId(String headingText) {
     function replacement(String match) {
         if (match == "-") {
@@ -49,9 +50,12 @@ shared String headingId(String headingText) {
     }.replace(headingText.lowercased, replacement);
 }
 
+"Returns an ID attribute for the given [node], if the given [[options]] call for one."
 shared String? headingIdAttribute(RenderOptions options)(Node node)
         => if (options.linkHeadings) then headingId(textContent(node)) else null;
 
+"Returns a code language attribute for the given [[node]], using the language specified in the node,
+ if there is one, or the default language specified in the given [[options]], if one was specified."
 shared String? languageAttribute(RenderOptions options)(Node node)
         => if (exists language = node.info?.split(' '.equals)?.first, !language.empty)
         then "language-``language``"

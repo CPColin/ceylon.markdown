@@ -50,7 +50,10 @@ import ceylon.markdown.parser {
     NodeType
 }
 
+"A renderer that produces a sequence of elements compatible with classes in [[module ceylon.html]]."
 shared class CeylonHtmlRenderer(RenderOptions options = RenderOptions()) {
+    "Alias for the type of objects that this renderer will output. These objects should be able to
+     become children of most block-level elements found in [[module ceylon.html]]."
     shared alias Element => CharacterData|HtmlNode;
     
     function narrow<Type>({Element*} children) => children.narrow<CharacterData|<HtmlNode&Type>>();
@@ -199,6 +202,7 @@ shared class CeylonHtmlRenderer(RenderOptions options = RenderOptions()) {
             case (NodeType.text) text
             case (NodeType.thematicBreak) thematicBreak;
     
+    "Renders the given tree, starting at its [[root]]."
     shared Element[] render(AstNode root) {
         value stack = LinkedList<MutableList<Element>>();
         

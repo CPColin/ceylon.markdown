@@ -14,5 +14,6 @@
  * under the License.
  *****************************************************************************/
 
+"Contains code for rendering trees of nodes parsed by [[package ceylon.markdown.parser]]."
 suppressWarnings("ceylonNamespace")
 shared package ceylon.markdown.renderer;
