@@ -44,6 +44,7 @@ String escapable = """[!"#$%&'()*+,./:;<=>?@\[\\\]^_`{|}~-]""";
 
 String escapedCharacter = """\\""" + escapable;
 
+"Regex that matches HTML entities."
 shared String entity = "&(?:#x[a-f0-9]{1,8}|#[0-9]{1,8}|[a-z][a-z0-9]{1,31});";
 
 Regex regexEntityOrEscapedCharacter => regex {

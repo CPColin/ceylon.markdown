@@ -16,15 +16,23 @@
 
 // Ported from commonmark.js/lib/node.js
 
+"A specific location in the Markdown source that was rendered."
 shared class SourceLoc(shared Integer line = 0, shared Integer column = 0) {
     string => "``line``:``column``";
 }
 
+"A range of locations in the Markdown source that was rendered."
 shared class SourcePos(shared variable SourceLoc start = SourceLoc(),
     shared variable SourceLoc end = SourceLoc()) {
     string => "``start``-``end``";
 }
 
+"A node in the tree produced by the [[Parser]].
+ 
+ This class is intentionally not very ceylonic, so it can continue to resemble the JavaScript code
+ it was ported from. This leads to a lot of `variable` attributes that hang around for longer than
+ they need to and have the potential to confuse developers who are looking to manipulate these
+ objects before they are rendered."
 shared class Node(shared NodeType nodeType, shared SourcePos? sourcePos = null)
         satisfies WalkableNode<Node> & Iterable<[Boolean, Node]> {
     shared actual variable String? destination = null;

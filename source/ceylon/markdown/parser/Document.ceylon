@@ -16,4 +16,5 @@
 
 // Ported from commonmark.js/lib/blocks.js
 
+"All-encompasing container for the rest of the nodes."
 shared class Document() extends Node(NodeType.document, SourcePos(SourceLoc(1, 1))) {}
