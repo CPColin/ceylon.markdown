@@ -14,6 +14,7 @@
  * under the License.
  *****************************************************************************/
 
+"The various types of [[Node]]s that the [[Parser]] can generate."
 shared class NodeType
         of blockQuote | code | codeBlock | document | emphasis | heading | htmlBlock | htmlInline
         | image | item | lineBreak | link | list | paragraph | softBreak | specialLink | strong
