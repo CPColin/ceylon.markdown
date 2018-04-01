@@ -51,30 +51,25 @@ import ceylon.markdown.parser {
 }
 
 "A renderer that produces a sequence of elements compatible with classes in [[module ceylon.html]]."
-shared class CeylonHtmlRenderer(RenderOptions options = RenderOptions()) {
+shared class CeylonHtmlRenderer(RenderOptions options = RenderOptions())
+        extends Renderer<Element[]>(options) {
     "Alias for the type of objects that this renderer will output. These objects should be able to
      become children of most block-level elements found in [[module ceylon.html]]."
     shared alias Element => CharacterData|HtmlNode;
     
-    function narrow<Type>({Element*} children) => children.narrow<CharacterData|<HtmlNode&Type>>();
+    "Alias for a single [[Element]] object or a stream of them."
+    shared alias Elements => Element|{Element*};
     
-    value headingIdAttribute => package.headingIdAttribute(options);
+    shared {<CharacterData|HtmlNode&Type>*} narrow<Type>({Element*} children)
+            => children.narrow<CharacterData|<HtmlNode&Type>>();
     
-    value languageAttribute => package.languageAttribute(options);
+    shared default Elements text(AstNode node, Anything _ = null) => node.literal else "";
     
-    value rawHtmlOmitted => package.rawHtmlOmitted(options);
+    shared default Elements softBreak(AstNode node, Anything _ = null) => Raw(options.softBreak);
     
-    value safeDestination => package.safeDestination(options);
+    shared default Elements lineBreak(AstNode node, Anything _ = null) => Br();
     
-    value sourcePosAttribute => package.sourcePosAttribute(options);
-    
-    function text(AstNode node, Anything _ = null) => node.literal else "";
-    
-    function softBreak(AstNode node, Anything _ = null) => Raw(options.softBreak);
-    
-    function lineBreak(AstNode node, Anything _ = null) => Br();
-    
-    function link(AstNode node, {Element*} children)
+    shared default Elements link(AstNode node, {Element*} children)
         => A {
             attributes = sourcePosAttribute(node);
             href = safeDestination(node);
@@ -88,20 +83,20 @@ shared class CeylonHtmlRenderer(RenderOptions options = RenderOptions()) {
                 child.literal else ""
     }).string;
     
-    function image(AstNode node, Anything _ = null)
+    shared default Elements image(AstNode node, Anything _ = null)
         => Img {
             alt = childText(node);
             src = safeDestination(node);
             title = nonemptyTitle(node);
         };
     
-    function emphasis(AstNode node, {Element*} children)
+    shared default Elements emphasis(AstNode node, {Element*} children)
         => Em { children = narrow<PhrasingCategory>(children); };
     
-    function strong(AstNode node, {Element*} children)
+    shared default Elements strong(AstNode node, {Element*} children)
         => Strong { children = narrow<PhrasingCategory>(children); };
     
-    function paragraph(AstNode node, {Element*} children)
+    shared default Elements paragraph(AstNode node, {Element*} children)
         => elideInTightList(node)
         then children // Elide Paragraph nodes in tight lists.
         else P {
@@ -109,7 +104,7 @@ shared class CeylonHtmlRenderer(RenderOptions options = RenderOptions()) {
             children = narrow<PhrasingCategory>(children);
         };
     
-    function heading(AstNode node, {Element*} children) {
+    shared default Elements heading(AstNode node, {Element*} children) {
         value attributes = sourcePosAttribute(node);
         value wrappedChildren = options.linkHeadings
             then {
@@ -130,9 +125,9 @@ shared class CeylonHtmlRenderer(RenderOptions options = RenderOptions()) {
             else "";
     }
     
-    function code(AstNode node, Anything _ = null) => Code { node.literal };
+    shared default Elements code(AstNode node, Anything _ = null) => Code { node.literal };
     
-    function codeBlock(AstNode node, Anything _ = null)
+    shared default Elements codeBlock(AstNode node, Anything _ = null)
         => Pre {
             Code {
                 attributes = sourcePosAttribute(node);
@@ -141,18 +136,18 @@ shared class CeylonHtmlRenderer(RenderOptions options = RenderOptions()) {
             }
         };
     
-    function thematicBreak(AstNode node, {Element*} children)
+    shared default Elements thematicBreak(AstNode node, {Element*} children)
         => Hr {
             attributes = sourcePosAttribute(node);
         };
     
-    function blockQuote(AstNode node, {Element*} children)
+    shared default Elements blockQuote(AstNode node, {Element*} children)
         => Blockquote {
             attributes = sourcePosAttribute(node);
             children = narrow<FlowCategory>(children);
         };
     
-    function list(AstNode node, {Element*} children)
+    shared default Elements list(AstNode node, {Element*} children)
         => if (exists listType = node.listType, listType == "bullet")
         then Ul {
             attributes = sourcePosAttribute(node);
@@ -164,21 +159,22 @@ shared class CeylonHtmlRenderer(RenderOptions options = RenderOptions()) {
             start = listStart(node);
         };
     
-    function item(AstNode node, {Element*} children)
+    shared default Elements item(AstNode node, {Element*} children)
         => Li {
             attributes = sourcePosAttribute(node);
             children = narrow<FlowCategory>(children);
         };
     
-    function htmlInline(AstNode node, Anything _) => Raw(rawHtmlOmitted(node));
+    shared default Elements htmlInline(AstNode node, Anything _) => Raw(rawHtmlOmitted(node));
     
-    function htmlBlock(AstNode node, Anything _) => {
+    shared default Elements htmlBlock(AstNode node, Anything _) => {
         "\n",
-        htmlInline(node, _),
+        Raw(rawHtmlOmitted(node)),
         "\n"
     };
     
-    function specialLink(AstNode node, Anything _ = null) => package.specialLink(node);
+    shared default Elements specialLink(AstNode node, Anything _ = null)
+            => package.specialLink(node);
     
     function renderFunction(AstNode node)
         => switch (node.nodeType)
@@ -202,8 +198,7 @@ shared class CeylonHtmlRenderer(RenderOptions options = RenderOptions()) {
             case (NodeType.text) text
             case (NodeType.thematicBreak) thematicBreak;
     
-    "Renders the given tree, starting at its [[root]]."
-    shared Element[] render(AstNode root) {
+    shared actual Element[] render(AstNode root) {
         value stack = LinkedList<MutableList<Element>>();
         
         void renderNode(AstNode node, {Element*} children) {

@@ -22,41 +22,33 @@ import ceylon.markdown.parser {
 }
 
 "A renderer that produces a [[String]] of raw HTML."
-shared class RawHtmlRenderer(RenderOptions options = RenderOptions()) {
-    value buffer = StringBuilder();
+shared class RawHtmlRenderer(RenderOptions options = RenderOptions())
+        extends Renderer<String>(options) {
+    shared StringBuilder buffer = StringBuilder();
     
-    variable value disableTags = 0;
+    shared variable Integer disableTags = 0;
     
     "Concatenates a literal string to the [[buffer]], without escaping it."
-    void literal(String string) {
+    shared void literal(String string) {
         buffer.append(string);
     }
     
     "Outputs a newline character, if the [[buffer]] is not empty and the last character in it isn't
      already a newline."
-    void newline() {
+    shared void newline() {
         if (exists character = buffer.last, character != '\n') {
             buffer.append("\n");
         }
     }
     
     "Concatenates a string to the [[buffer]], after escaping it."
-    void output(String string) {
+    shared void output(String string) {
         literal(escapeHtml(string, false));
     }
     
-    value headingIdAttribute => package.headingIdAttribute(options);
-    
-    value languageAttribute => package.languageAttribute(options);
-    
-    value rawHtmlOmitted => package.rawHtmlOmitted(options);
-    
-    value safeDestination => package.safeDestination(options);
-    
-    value sourcePosAttribute => package.sourcePosAttribute(options);
-    
     "Helper function to produce an HTML tag."
-    void tag(String name, {<String -> String?>*} attributes = empty, Boolean selfClosing = false) {
+    shared void tag(String name, {<String -> String?>*} attributes = empty,
+            Boolean selfClosing = false) {
         if (disableTags > 0) {
             return;
         }
@@ -78,20 +70,20 @@ shared class RawHtmlRenderer(RenderOptions options = RenderOptions()) {
     
     // Node rendering methods
     
-    void text(Node node) {
+    shared default void text(Node node) {
         output(node.literal else "");
     }
     
-    void softBreak() {
+    shared default void softBreak() {
         literal(options.softBreak);
     }
     
-    void lineBreak() {
+    shared default void lineBreak() {
         tag("br", empty, true);
         newline();
     }
     
-    void link(Node node, Boolean entering) {
+    shared default void link(Node node, Boolean entering) {
         if (entering) {
             tag("a", sourcePosAttribute(node).chain {
                 "href" -> escapeHtml(safeDestination(node), true),
@@ -103,7 +95,7 @@ shared class RawHtmlRenderer(RenderOptions options = RenderOptions()) {
         }
     }
     
-    void image(Node node, Boolean entering) {
+    shared default void image(Node node, Boolean entering) {
         if (entering) {
             if (disableTags == 0) {
                 literal("<img src=\"``escapeHtml(safeDestination(node), true)``\" alt=\"");
@@ -123,15 +115,15 @@ shared class RawHtmlRenderer(RenderOptions options = RenderOptions()) {
         }
     }
     
-    void emphasis(Node node, Boolean entering) {
+    shared default void emphasis(Node node, Boolean entering) {
         tag(entering then "em" else "/em");
     }
     
-    void strong(Node node, Boolean entering) {
+    shared default void strong(Node node, Boolean entering) {
         tag(entering then "strong" else "/strong");
     }
     
-    void paragraph(Node node, Boolean entering) {
+    shared default void paragraph(Node node, Boolean entering) {
         if (elideInTightList(node)) {
             return;
         }
@@ -145,7 +137,7 @@ shared class RawHtmlRenderer(RenderOptions options = RenderOptions()) {
         }
     }
     
-    void heading(Node node, Boolean entering) {
+    shared default void heading(Node node, Boolean entering) {
         value tagName = "h``node.level else 0``";
         
         if (entering) {
@@ -165,13 +157,13 @@ shared class RawHtmlRenderer(RenderOptions options = RenderOptions()) {
         }
     }
     
-    void code(Node node, Boolean entering) {
+    shared default void code(Node node, Boolean entering) {
         tag("code");
         output(node.literal else "");
         tag("/code");
     }
     
-    void codeBlock(Node node) {
+    shared default void codeBlock(Node node) {
         newline();
         tag("pre");
         tag("code", sourcePosAttribute(node).chain { "class" -> languageAttribute(node) });
@@ -181,13 +173,13 @@ shared class RawHtmlRenderer(RenderOptions options = RenderOptions()) {
         newline();
     }
     
-    void thematicBreak(Node node) {
+    shared default void thematicBreak(Node node) {
         newline();
         tag("hr", sourcePosAttribute(node), true);
         newline();
     }
     
-    void blockQuote(Node node, Boolean entering) {
+    shared default void blockQuote(Node node, Boolean entering) {
         if (entering) {
             newline();
             tag("blockquote", sourcePosAttribute(node));
@@ -199,7 +191,7 @@ shared class RawHtmlRenderer(RenderOptions options = RenderOptions()) {
         }
     }
     
-    void list(Node node, Boolean entering) {
+    shared default void list(Node node, Boolean entering) {
         value tagName = (node.listType else "") == "bullet" then "ul" else "ol";
         
         if (entering) {
@@ -213,7 +205,7 @@ shared class RawHtmlRenderer(RenderOptions options = RenderOptions()) {
         }
     }
     
-    void item(Node node, Boolean entering) {
+    shared default void item(Node node, Boolean entering) {
         if (entering) {
             tag("li", sourcePosAttribute(node));
         } else {
@@ -222,17 +214,17 @@ shared class RawHtmlRenderer(RenderOptions options = RenderOptions()) {
         }
     }
     
-    void htmlInline(Node node) {
+    shared default void htmlInline(Node node) {
         literal(rawHtmlOmitted(node));
     }
     
-    void htmlBlock(Node node) {
+    shared default void htmlBlock(Node node) {
         newline();
         htmlInline(node);
         newline();
     }
     
-    void specialLink(Node node) {
+    shared default void specialLink(Node node) {
         literal(package.specialLink(node));
     }
     
@@ -258,8 +250,7 @@ shared class RawHtmlRenderer(RenderOptions options = RenderOptions()) {
             case (NodeType.text) text
             case (NodeType.thematicBreak) thematicBreak;
     
-    "Renders the given tree, starting at its [[root]]."
-    shared String render(Node root) {
+    shared actual String render(Node root) {
         buffer.clear();
         
         for ([entering, node] in root) {
