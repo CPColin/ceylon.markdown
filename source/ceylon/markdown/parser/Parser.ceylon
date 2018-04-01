@@ -24,17 +24,18 @@ import ceylon.regex {
     regex
 }
 
-interface Block {
-    shared formal Boolean acceptsLines;
-    
-    shared formal Boolean canContain(NodeType type);
-    
-    shared formal Continuation continuation;
-    
-    shared formal void finalize();
-}
-
+"A parser that takes Markdown text as input and produces a tree of [[Node]] objects."
 shared class Parser {
+    interface Block {
+        shared formal Boolean acceptsLines;
+        
+        shared formal Boolean canContain(NodeType type);
+        
+        shared formal Continuation continuation;
+        
+        shared formal void finalize();
+    }
+    
     value codeIndent = 4;
     
     value regexAtxHeadingMarker = """^#{1,6}(?:[ \t]+|$)""";
