@@ -14,7 +14,7 @@
  * under the License.
  *****************************************************************************/
 
-"Options that can be passed to the [Parser] constructor, to control some of the parsing behavior."
+"Options that can be passed to the [[Parser]] constructor, to control some of the parsing behavior."
 shared class ParseOptions(
     """When enabled, turns quotation marks into "smart" or "curly" quotes, turns runs of hyphens
        into en- and em-dashes, and turns runs of periods into ellipses."""
